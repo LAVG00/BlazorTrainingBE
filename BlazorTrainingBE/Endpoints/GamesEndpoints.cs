@@ -14,7 +14,7 @@ namespace BlazorTrainingBE.Endpoints
 
         public static RouteGroupBuilder MapGamesEndpoints(this WebApplication app)
         {
-            var group = app.MapGroup("games");
+            var group = app.MapGroup("games").WithParameterValidation();
 
             // GET /games
             group.MapGet("/", () => games);
