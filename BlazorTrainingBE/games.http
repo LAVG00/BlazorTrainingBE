@@ -1,4 +1,28 @@
+
 GET http://localhost:5224/games
 
 ###
-GET http://localhost:5224/games/1
+GET http://localhost:5224/games/4
+
+###
+POST http://localhost:5224/games
+Content-Type: application/json
+{
+    "name": "Battlefield 1",
+    "genre": "FPS",
+    "price": 499.00,
+    "releaseDate": "2016-08-30"
+}
+
+###
+PUT http://localhost:5224/games/1
+Content-Type: application/json
+{
+    "name": "Dark Souls",
+    "genre": "RPG",
+    "price": 501.00,
+    "releaseDate": "2011-09-22"
+}
+
+###
+DELETE http://localhost:5224/games/1
