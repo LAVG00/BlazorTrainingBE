@@ -1,4 +1,7 @@
-﻿using BlazorTrainingBE.Dtos;
+﻿using BlazorTrainingBE.Data;
+using BlazorTrainingBE.Dtos;
+using BlazorTrainingBE.Entities;
+using BlazorTrainingBE.Mappers;
 
 namespace BlazorTrainingBE.Endpoints
 {
@@ -28,11 +31,15 @@ namespace BlazorTrainingBE.Endpoints
             ).WithName(GetGameEndpointName);
 
             //POST /games
-            group.MapPost("/", (CreateGameDto newGame) =>
+            group.MapPost("/", (CreateGameDto newGame, GameStoreContext dbContext) =>
             {
-                GameDto game = new(games.Count + 1, newGame.Name, newGame.Genre, newGame.Price, newGame.ReleaseDate);
-                games.Add(game);
-                return Results.CreatedAtRoute(GetGameEndpointName, new { id = game.Id }, game);
+                Game game = newGame.ToEntity();
+                game.Genre = dbContext.Genres.Find(newGame.GenreId);
+
+                dbContext.Games.Add(game);
+                dbContext.SaveChanges();
+
+                return Results.CreatedAtRoute(GetGameEndpointName, new { id = game.Id }, game.ToDto());
             });
 
             //PUT /games/{id}
