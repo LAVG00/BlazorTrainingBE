@@ -8,10 +8,10 @@ GET http://localhost:5224/games/4
 POST http://localhost:5224/games
 Content-Type: application/json
 {
-    "name": "Battlefield 1",
-    "genre": "FPS",
-    "price": 499.00,
-    "releaseDate": "2016-08-30"
+    "name": "Monster Hunter Rise",
+    "genreId": 2,
+    "price": 490.00,
+    "releaseDate": "2021-03-26"
 }
 
 ###
