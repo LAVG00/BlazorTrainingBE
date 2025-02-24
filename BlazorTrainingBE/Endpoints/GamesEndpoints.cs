@@ -9,7 +9,7 @@ namespace BlazorTrainingBE.Endpoints
     {
         const string GetGameEndpointName = "GetGame";
 
-        private static readonly List<GameDto> games = [
+        private static readonly List<GameSummaryDto> games = [
             new(1, "Dark Souls", "RPG", 549.00M, new DateOnly(2011, 9, 22)),
             new(2, "Pokemon Platinum", "RPG", 800.00M, new DateOnly(2008, 9, 13)),
             new(3, "Monster Hunter Rise", "ARPG", 490.00M, new DateOnly(2021, 3, 26)),
@@ -23,10 +23,10 @@ namespace BlazorTrainingBE.Endpoints
             group.MapGet("/", () => games);
 
             //GET /game/{id}
-            group.MapGet("/{id}", (int id) =>
+            group.MapGet("/{id}", (int id, GameStoreContext dbContext) =>
             {
-                GameDto? game = games.Find(game => game.Id == id);
-                return game is null ? Results.NotFound() : Results.Ok(game);
+                Game? game = dbContext.Games.Find(id);
+                return game is null ? Results.NotFound() : Results.Ok(game.ToGameDetailsDto());
             }
             ).WithName(GetGameEndpointName);
 
@@ -34,12 +34,11 @@ namespace BlazorTrainingBE.Endpoints
             group.MapPost("/", (CreateGameDto newGame, GameStoreContext dbContext) =>
             {
                 Game game = newGame.ToEntity();
-                game.Genre = dbContext.Genres.Find(newGame.GenreId);
 
                 dbContext.Games.Add(game);
                 dbContext.SaveChanges();
 
-                return Results.CreatedAtRoute(GetGameEndpointName, new { id = game.Id }, game.ToDto());
+                return Results.CreatedAtRoute(GetGameEndpointName, new { id = game.Id }, game.ToGameDetailsDto());
             });
 
             //PUT /games/{id}
@@ -52,7 +51,7 @@ namespace BlazorTrainingBE.Endpoints
                     return Results.NotFound();
                 }
 
-                games[index] = new GameDto(
+                games[index] = new GameSummaryDto(
                     id,
                     updatedGame.Name,
                     updatedGame.Genre,
